@@ -3,11 +3,9 @@ Module untuk preprocessing data email spam
 """
 
 import pandas as pd
-import numpy as np
+import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-import re
-import string
 
 
 def load_data(filepath):
@@ -25,10 +23,24 @@ def load_data(filepath):
         DataFrame dengan kolom 'label' dan 'text'
     """
     try:
-        df = pd.read_csv(filepath, usecols=[0, 1], encoding='utf-8')
+        df = pd.read_csv(filepath, usecols=[0, 1], encoding="utf-8")
     except UnicodeDecodeError:
-        df = pd.read_csv(filepath, usecols=[0, 1], encoding='latin-1')
-    
+        df = pd.read_csv(filepath, usecols=[0, 1], encoding="latin-1")
+
+    df.columns = ["label", "text"]
+    return df
+
+
+def clean_text(text):
+    """
+    Membersihkan teks dari karakter khusus, URL, dan karakter tidak perlu
+
+    Parameters:
+    -----------
+    text : str
+        Teks yang akan dibersihkan
+
+    Returns:
     --------
     str
         Teks yang sudah dibersihkan
